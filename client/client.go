@@ -19,7 +19,7 @@ func testConn(client pb.RpcServiceClient) {
 
 	resp, err := client.Set(ctx, &pb.SetRequest{Key: "test", Value: []byte("testvalue")})
 	if err != nil {
-		log.Fatalf("client.Set Failed!")
+		log.Fatalf("client.Set Failed!, %v", err)
 	}
 	log.Println(resp)
 

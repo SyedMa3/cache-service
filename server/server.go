@@ -1,56 +1,19 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net"
 
-	"github.com/SyedMa3/cache-service/db"
+	"github.com/SyedMa3/cache-service/server/handlers"
+	"github.com/SyedMa3/cache-service/server/logic"
 	pb "github.com/SyedMa3/cache-service/z_generated"
-
 	"google.golang.org/grpc"
 )
 
-var DB *db.RedisDB
+func newServer() *handlers.RpcServer {
 
-type rpcServer struct {
-	pb.UnimplementedRpcServiceServer
-}
-
-func (s *rpcServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.Response, error) {
-	val, err := DB.Get(in.GetKey())
-	if err != nil {
-		return &pb.Response{Status: err.Error()}, err
-	}
-	return &pb.Response{Value: val, Status: "Success"}, nil
-}
-
-func (s *rpcServer) Set(ctx context.Context, in *pb.SetRequest) (*pb.Response, error) {
-	_, err := DB.Set(in.GetKey(), in.GetValue())
-	if err != nil {
-		return &pb.Response{Status: err.Error()}, err
-	}
-	return &pb.Response{Value: in.GetValue(), Status: "Success"}, nil
-}
-
-func (s *rpcServer) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.UserResponse, error) {
-	val, err := DB.GetUser(in)
-	if err != nil {
-		return &pb.UserResponse{Status: err.Error()}, err
-	}
-	return val, nil
-}
-
-func (s *rpcServer) SetUser(ctx context.Context, in *pb.SetUserRequest) (*pb.UserResponse, error) {
-	val, err := DB.SetUser(in)
-	if err != nil {
-		return &pb.UserResponse{Status: err.Error()}, err
-	}
-	return &pb.UserResponse{Key: val, Status: "Success"}, nil
-}
-
-func newServer() *rpcServer {
-	s := &rpcServer{}
+	s := &handlers.RpcServer{}
+	// log.Println("here")
 	return s
 }
 
@@ -60,13 +23,14 @@ func main() {
 		log.Fatalln("Failed to listen at port 9000")
 	}
 
-	grpcServer := grpc.NewServer()
+	gRpcServer := grpc.NewServer()
 
-	DB, err = db.CreateDB()
+	err = logic.CreateDB()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	pb.RegisterRpcServiceServer(grpcServer, newServer())
-	grpcServer.Serve(lis)
+	// log.Println(RDB.GetUser())
+	pb.RegisterRpcServiceServer(gRpcServer, newServer())
+	gRpcServer.Serve(lis)
 }
