@@ -27,14 +27,14 @@ func testConn(client pb.RpcServiceClient) {
 	if err != nil {
 		log.Fatalf("client.Set Failed!")
 	}
-	log.Printf("client.Set resonse: %s", resp)
+	log.Printf("client.Set response: %s", resp)
 }
 
 func main() {
 
 	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Could not connect")
+		log.Fatalf("Could not connect at %v", serverAddr)
 	}
 	defer conn.Close()
 

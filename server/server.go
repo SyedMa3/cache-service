@@ -30,13 +30,11 @@ func newServer() *rpcServer {
 func main() {
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatalf("Failed to listen")
+		log.Fatalf("Failed to listen at port 9000")
 	}
 
 	grpcServer := grpc.NewServer()
 
 	pb.RegisterRpcServiceServer(grpcServer, newServer())
-
 	grpcServer.Serve(lis)
-
 }
