@@ -13,7 +13,6 @@ import (
 func newServer() *handlers.RpcServer {
 
 	s := &handlers.RpcServer{}
-	// log.Println("here")
 	return s
 }
 
@@ -30,7 +29,6 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// log.Println(RDB.GetUser())
 	pb.RegisterRpcServiceServer(gRpcServer, newServer())
 	gRpcServer.Serve(lis)
 }

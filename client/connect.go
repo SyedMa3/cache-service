@@ -21,6 +21,6 @@ func main() {
 
 	client := pb.NewRpcServiceClient(conn)
 
-	TestRawConn(client)
-	TestUserConn(client)
+	TestRawConn(client)  //Testing Raw methods
+	TestUserConn(client) //Testing User Methods
 }
