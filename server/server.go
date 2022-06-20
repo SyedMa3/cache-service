@@ -41,14 +41,14 @@ func newServer() *rpcServer {
 func main() {
 	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatalf("Failed to listen at port 9000")
+		log.Fatalln("Failed to listen at port 9000")
 	}
 
 	grpcServer := grpc.NewServer()
 
 	DB, err = db.CreateDB()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	pb.RegisterRpcServiceServer(grpcServer, newServer())

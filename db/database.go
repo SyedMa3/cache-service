@@ -28,7 +28,7 @@ func (r *RedisDB) Set(key string, value []byte) (string, error) {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	return key, nil
@@ -38,7 +38,7 @@ func (r *RedisDB) Get(key string) ([]byte, error) {
 	var val []byte
 	err := Rcache.Get(r.client.Context(), key, &val)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	return val, nil
@@ -52,7 +52,7 @@ func CreateDB() (*RedisDB, error) {
 	})
 	_, err := rdb.Ping(rdb.Context()).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	Rcache = cache.New(&cache.Options{
