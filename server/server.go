@@ -1,40 +1,18 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net"
 
-	"github.com/SyedMa3/cache-service/db"
-	pb "github.com/SyedMa3/cache-service/proto"
-
+	"github.com/SyedMa3/cache-service/server/handlers"
+	"github.com/SyedMa3/cache-service/server/logic"
+	pb "github.com/SyedMa3/cache-service/z_generated"
 	"google.golang.org/grpc"
 )
 
-var DB *db.RedisDB
+func newServer() *handlers.RpcServer {
 
-type rpcServer struct {
-	pb.UnimplementedRpcServiceServer
-}
-
-func (s *rpcServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.Response, error) {
-	val, err := DB.Get(in.GetKey())
-	if err != nil {
-		return &pb.Response{Status: err.Error()}, err
-	}
-	return &pb.Response{Value: val, Status: "Success"}, nil
-}
-
-func (s *rpcServer) Set(ctx context.Context, in *pb.SetRequest) (*pb.Response, error) {
-	_, err := DB.Set(in.GetKey(), in.GetValue())
-	if err != nil {
-		return &pb.Response{Status: err.Error()}, err
-	}
-	return &pb.Response{Value: in.GetValue(), Status: "Success"}, nil
-}
-
-func newServer() *rpcServer {
-	s := &rpcServer{}
+	s := &handlers.RpcServer{}
 	return s
 }
 
@@ -44,13 +22,13 @@ func main() {
 		log.Fatalln("Failed to listen at port 9000")
 	}
 
-	grpcServer := grpc.NewServer()
+	gRpcServer := grpc.NewServer()
 
-	DB, err = db.CreateDB()
+	err = logic.CreateDB()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	pb.RegisterRpcServiceServer(grpcServer, newServer())
-	grpcServer.Serve(lis)
+	pb.RegisterRpcServiceServer(gRpcServer, newServer())
+	gRpcServer.Serve(lis)
 }

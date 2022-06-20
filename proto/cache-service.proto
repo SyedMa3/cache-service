@@ -12,6 +12,27 @@ message GetRequest {
     string key = 1;
 }
 
+message SetUserRequest {
+    string name = 1;
+    string class = 2;
+    int64 roll_num = 3;
+    bytes metadata = 4;
+}
+
+message GetUserRequest {
+    string name = 1;
+    int64 roll_num = 2;
+}
+
+message UserResponse {
+    string key = 1;
+    string name = 2;
+    string class = 3;
+    int64 roll_num = 4;
+    bytes metadata = 5;
+    string status = 6;
+}
+
 message Response {
     string status = 1;
     bytes value = 2;
@@ -20,4 +41,6 @@ message Response {
 service rpcService {
     rpc Get(GetRequest) returns (Response);
     rpc Set(SetRequest) returns (Response);
+    rpc GetUser(GetUserRequest) returns (UserResponse);
+    rpc SetUser(SetUserRequest) returns (UserResponse);
 }

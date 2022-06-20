@@ -1,22 +1,18 @@
-package db
+package logic
 
 import (
 	"log"
 	"time"
 
+	pb "github.com/SyedMa3/cache-service/z_generated"
 	"github.com/go-redis/cache/v8"
-	"github.com/go-redis/redis/v8"
 )
 
 type DB interface {
 	Set(key string, value []byte) (string, error)
 	Get(key string) (string, error)
-}
-
-var Rcache *cache.Cache
-
-type RedisDB struct {
-	client *redis.Client
+	SetUser(in *pb.SetRequest) (string, error)
+	GetUser(in *pb.GetUserRequest) (*pb.UserResponse, error)
 }
 
 func (r *RedisDB) Set(key string, value []byte) (string, error) {
@@ -36,28 +32,10 @@ func (r *RedisDB) Set(key string, value []byte) (string, error) {
 
 func (r *RedisDB) Get(key string) ([]byte, error) {
 	var val []byte
-	err := Rcache.Get(r.client.Context(), key, &val)
+	err := Rcache.Get(r.client.Context(), "mateen:"+key, &val)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	return val, nil
-}
-
-func CreateDB() (*RedisDB, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	})
-	_, err := rdb.Ping(rdb.Context()).Result()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	Rcache = cache.New(&cache.Options{
-		Redis: rdb,
-	})
-
-	return &RedisDB{client: rdb}, nil
 }

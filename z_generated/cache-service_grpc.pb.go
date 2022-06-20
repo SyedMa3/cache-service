@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type RpcServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Response, error)
 	Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*Response, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	SetUser(ctx context.Context, in *SetUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 }
 
 type rpcServiceClient struct {
@@ -52,12 +54,32 @@ func (c *rpcServiceClient) Set(ctx context.Context, in *SetRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *rpcServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/proto.rpcService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rpcServiceClient) SetUser(ctx context.Context, in *SetUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+	out := new(UserResponse)
+	err := c.cc.Invoke(ctx, "/proto.rpcService/SetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RpcServiceServer is the server API for RpcService service.
 // All implementations must embed UnimplementedRpcServiceServer
 // for forward compatibility
 type RpcServiceServer interface {
 	Get(context.Context, *GetRequest) (*Response, error)
 	Set(context.Context, *SetRequest) (*Response, error)
+	GetUser(context.Context, *GetUserRequest) (*UserResponse, error)
+	SetUser(context.Context, *SetUserRequest) (*UserResponse, error)
 	mustEmbedUnimplementedRpcServiceServer()
 }
 
@@ -70,6 +92,12 @@ func (UnimplementedRpcServiceServer) Get(context.Context, *GetRequest) (*Respons
 }
 func (UnimplementedRpcServiceServer) Set(context.Context, *SetRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (UnimplementedRpcServiceServer) GetUser(context.Context, *GetUserRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedRpcServiceServer) SetUser(context.Context, *SetUserRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUser not implemented")
 }
 func (UnimplementedRpcServiceServer) mustEmbedUnimplementedRpcServiceServer() {}
 
@@ -120,6 +148,42 @@ func _RpcService_Set_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RpcService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RpcServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.rpcService/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RpcServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RpcService_SetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RpcServiceServer).SetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.rpcService/SetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RpcServiceServer).SetUser(ctx, req.(*SetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RpcService_ServiceDesc is the grpc.ServiceDesc for RpcService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var RpcService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Set",
 			Handler:    _RpcService_Set_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _RpcService_GetUser_Handler,
+		},
+		{
+			MethodName: "SetUser",
+			Handler:    _RpcService_SetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
