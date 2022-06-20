@@ -17,17 +17,17 @@ func testConn(client pb.RpcServiceClient) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	resp, err := client.Get(ctx, &pb.GetRequest{Key: "test"})
-	if err != nil {
-		log.Fatalf("client.Get Failed!")
-	}
-	log.Printf("client.Get response: %s", resp)
-
-	resp, err = client.Set(ctx, &pb.SetRequest{Key: "test", Value: []byte("testvalue")})
+	resp, err := client.Set(ctx, &pb.SetRequest{Key: "test", Value: []byte("testvalue")})
 	if err != nil {
 		log.Fatalf("client.Set Failed!")
 	}
-	log.Printf("client.Set response: %s", resp)
+	log.Println(resp)
+
+	resp, err = client.Get(ctx, &pb.GetRequest{Key: "mateen:test"})
+	if err != nil {
+		log.Fatalf("client.Get Failed!")
+	}
+	log.Println(resp)
 }
 
 func main() {
