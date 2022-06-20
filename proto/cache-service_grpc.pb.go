@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: proto/cache-service.proto
 
-package __
+package proto
 
 import (
 	context "context"
