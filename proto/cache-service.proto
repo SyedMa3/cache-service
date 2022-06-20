@@ -13,6 +13,7 @@ message GetRequest {
 }
 
 message Response {
+    string status = 1;
     bytes value = 2;
 }
 
