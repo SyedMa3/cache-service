@@ -5,17 +5,24 @@ import (
 	"log"
 	"net"
 
+	"github.com/SyedMa3/cache-service/db"
 	pb "github.com/SyedMa3/cache-service/proto"
 
 	"google.golang.org/grpc"
 )
+
+var DB *db.RedisDB
 
 type rpcServer struct {
 	pb.UnimplementedRpcServiceServer
 }
 
 func (s *rpcServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.Response, error) {
-	return &pb.Response{Value: []byte("Mateen will implement me")}, nil
+	val, err := DB.Get(in.GetKey())
+	if err != nil {
+
+	}
+	return &pb.Response{Value: val}, nil
 }
 
 func (s *rpcServer) Set(ctx context.Context, in *pb.SetRequest) (*pb.Response, error) {
@@ -34,6 +41,11 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
+
+	DB, err = db.CreateDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	pb.RegisterRpcServiceServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
