@@ -6,7 +6,7 @@ import (
 	"net"
 
 	"github.com/SyedMa3/cache-service/db"
-	pb "github.com/SyedMa3/cache-service/proto"
+	pb "github.com/SyedMa3/cache-service/z_generated"
 
 	"google.golang.org/grpc"
 )
@@ -31,6 +31,22 @@ func (s *rpcServer) Set(ctx context.Context, in *pb.SetRequest) (*pb.Response, e
 		return &pb.Response{Status: err.Error()}, err
 	}
 	return &pb.Response{Value: in.GetValue(), Status: "Success"}, nil
+}
+
+func (s *rpcServer) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.UserResponse, error) {
+	val, err := DB.GetUser(in)
+	if err != nil {
+		return &pb.UserResponse{Status: err.Error()}, err
+	}
+	return val, nil
+}
+
+func (s *rpcServer) SetUser(ctx context.Context, in *pb.SetUserRequest) (*pb.UserResponse, error) {
+	val, err := DB.SetUser(in)
+	if err != nil {
+		return &pb.UserResponse{Status: err.Error()}, err
+	}
+	return &pb.UserResponse{Key: val, Status: "Success"}, nil
 }
 
 func newServer() *rpcServer {
